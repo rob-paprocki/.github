@@ -1,0 +1,66 @@
+name: Update profile cards
+
+on:
+  schedule:
+    - cron: "17 6 * * *" # once a day at 06:17 UTC
+  workflow_dispatch: # adds a "Run workflow" button on the Actions tab
+  push:
+    branches: [main]
+    paths: [.github/workflows/update-cards.yml] # also runs right after this file is added or edited
+
+permissions:
+  contents: write # lets the workflow commit the refreshed cards
+
+jobs:
+  cards:
+    runs-on: ubuntu-latest
+    env:
+      # Optional: add a repo secret named STATS_PAT to count private contributions.
+      # Without it, the built-in token is used and only public activity is counted.
+      TOKEN: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Stats card (light)
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: stats
+          options: username=rob-paprocki&show_icons=true&include_all_commits=true&theme=default
+          path: profile/cards/stats-light.svg
+          token: ${{ env.TOKEN }}
+          fail_on_error: "true" # on an API hiccup, keep yesterday's card instead of an error card
+
+      - name: Stats card (dark)
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: stats
+          options: username=rob-paprocki&show_icons=true&include_all_commits=true&theme=github_dark_dimmed
+          path: profile/cards/stats-dark.svg
+          token: ${{ env.TOKEN }}
+          fail_on_error: "true"
+
+      - name: Top languages card (light)
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: top-langs
+          options: username=rob-paprocki&layout=compact&langs_count=8&theme=default
+          path: profile/cards/top-langs-light.svg
+          token: ${{ env.TOKEN }}
+          fail_on_error: "true"
+
+      - name: Top languages card (dark)
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: top-langs
+          options: username=rob-paprocki&layout=compact&langs_count=8&theme=github_dark_dimmed
+          path: profile/cards/top-langs-dark.svg
+          token: ${{ env.TOKEN }}
+          fail_on_error: "true"
+
+      - name: Commit cards
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add profile/cards/*.svg
+          git commit -m "Update profile stats cards" || exit 0
+          git push
