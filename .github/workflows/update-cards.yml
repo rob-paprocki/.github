@@ -57,6 +57,33 @@ jobs:
           token: ${{ env.TOKEN }}
           fail_on_error: "true"
 
+      # Top contributed repos card. Its old hosted service was shut down, so it's built here too.
+      # Pinned to an exact version of a third-party action; continue-on-error means a failure
+      # here only skips this card for the day and never blocks the other cards.
+      - name: Top contributed repos card (light)
+        uses: HwangTaehyun/github-contributor-stats/action@95a90818c685ac6487d10750fbfc42bcdc5ef14f
+        continue-on-error: true
+        env:
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ env.TOKEN }}
+        with:
+          username: rob-paprocki
+          output-file: profile/cards/contributors-light.svg
+          combine-all-yearly-contributions: "true"
+          limit: "5"
+          theme: vue
+
+      - name: Top contributed repos card (dark)
+        uses: HwangTaehyun/github-contributor-stats/action@95a90818c685ac6487d10750fbfc42bcdc5ef14f
+        continue-on-error: true
+        env:
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ env.TOKEN }}
+        with:
+          username: rob-paprocki
+          output-file: profile/cards/contributors-dark.svg
+          combine-all-yearly-contributions: "true"
+          limit: "5"
+          theme: vue-dark
+
       - name: Commit cards
         run: |
           git config user.name "github-actions[bot]"
