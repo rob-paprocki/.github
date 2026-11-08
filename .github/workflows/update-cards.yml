@@ -70,7 +70,7 @@ jobs:
           output-file: profile/cards/contributors-light.svg
           combine-all-yearly-contributions: "true"
           limit: "5"
-          theme: vue
+          theme: default
 
       - name: Top contributed repos card (dark)
         uses: HwangTaehyun/github-contributor-stats/action@95a90818c685ac6487d10750fbfc42bcdc5ef14f
@@ -82,7 +82,7 @@ jobs:
           output-file: profile/cards/contributors-dark.svg
           combine-all-yearly-contributions: "true"
           limit: "5"
-          theme: vue-dark
+          theme: github_dark_dimmed
 
       - name: Commit cards
         run: |
@@ -91,3 +91,4 @@ jobs:
           git add profile/cards/*.svg
           git commit -m "Update profile stats cards" || exit 0
           git push
+          
